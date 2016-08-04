@@ -1,0 +1,39 @@
+#!/usr/bin/ruby
+
+begin
+  puts "prepare-commit-msg \"#{ARGV[0]}\" \"#{ARGV[1]}\" \"#{ARGV[2]}\""
+  if (!ARGV[1].nil?)
+      puts 'skipping prefix'
+      exit
+  end
+
+  commit_file = ARGV[0]
+
+  commit_prefix = `git config commit.prefix` 
+  branchname = `git rev-parse --abbrev-ref HEAD`
+  ticketNum = /\d\d\d+/.match(branchname)
+  ticketNum = if ticketNum==nil then nil else ticketNum[0] end
+
+  if (commit_prefix.nil? || commit_prefix.empty?) 
+    commit_prefix = ""
+    commit_prefix += "\n"
+    commit_prefix += "# You have not configured you a commit prefix. You can do so by running: \n"
+    commit_prefix += "#     git config commit.prefix \"ticket-%t: \"\n"
+    commit_prefix += "# \"%t\" will be substituted with the commit number found in the current branch name.\n"
+    commit_prefix += "#"
+  else
+    if (ticketNum == nil) 
+      $stderr.print "No ticket number in branch name\n"
+      exit
+    end
+    commit_prefix.sub!(/%t/, ticketNum)
+  end
+
+  commit_text = commit_prefix
+  commit_text += File.read(commit_file)
+  File.open(commit_file, 'w') { |f| f.write commit_text }
+rescue
+  # `echo 'there was an error' >> log`
+  $stderr.print "FAILURE"
+  $stderr.print $!.message
+end
