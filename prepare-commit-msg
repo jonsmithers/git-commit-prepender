@@ -9,7 +9,8 @@ begin
 
   commit_file = ARGV[0]
 
-  commit_prefix = `git config commit.prefix` 
+  commit_prefix = `git config commit.prefix`.gsub(/\\n/, '\n')
+
   branchname = `git rev-parse --abbrev-ref HEAD`
   ticketNum = /\d\d\d+/.match(branchname)
   ticketNum = if ticketNum==nil then nil else ticketNum[0] end
