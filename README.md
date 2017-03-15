@@ -1,3 +1,9 @@
+# About
+
+This git hook makes it easy to associate each of your git commits with a ticket
+number. Whenever you make a new commit, it looks for a number in your current
+branch name, and then prepends it to the commit message before your commit
+message editor opens.
 
 # Installation
 
@@ -18,5 +24,5 @@ git config commit.prefix "#%t) "
 git config commit.prefix "\n\nMY-PROJECT: %t"
 ```
 
-In every example `%t` will be substituted with a number found the branch name.
-If no number is found, then no prefix is inserted.
+In every example `%t` will be substituted with a number found in the branch
+name. If no number is found, then no prefix is inserted.
